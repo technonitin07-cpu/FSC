@@ -1,0 +1,612 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Focus Study Center App</title>
+    <style>
+        /* --- CSS STYLES (Unchanged Base Styles) --- */
+        :root {
+            --primary: #4F46E5; /* Indigo */
+            --secondary: #E0E7FF;
+            --accent: #F59E0B; /* Orange */
+            --bg: #F3F4F6;
+            --text: #1F2937;
+            --success: #10B981;
+            --danger: #EF4444;
+            --whatsapp: #25D366;
+            --youtube: #FF0000;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg);
+            margin: 0;
+            padding: 0;
+            color: var(--text);
+            padding-bottom: 80px;
+        }
+
+        /* HEADER */
+        header {
+            background-color: var(--primary);
+            color: white;
+            padding: 20px;
+            text-align: center;
+            border-bottom-left-radius: 20px;
+            border-bottom-right-radius: 20px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        header h1 { margin: 0; font-size: 22px; }
+        header p { margin: 5px 0 0; opacity: 0.9; font-size: 14px; }
+
+        /* SECTIONS (Pages) */
+        .page {
+            display: none;
+            padding: 20px;
+            animation: fadeIn 0.3s;
+        }
+        .page.active { display: block; }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* NEWS TICKER (NEW) */
+        .news-ticker {
+            background: #ffe0b2;
+            color: #d84315;
+            padding: 8px;
+            font-size: 13px;
+            font-weight: bold;
+            white-space: nowrap;
+            overflow: hidden;
+            border-radius: 5px;
+            margin-bottom: 15px;
+            border: 1px solid #ffcc80;
+        }
+        .marquee-content {
+            display: inline-block;
+            animation: marquee 15s linear infinite;
+        }
+        @keyframes marquee {
+            0% { transform: translateX(100%); }
+            100% { transform: translateX(-100%); }
+        }
+
+        /* HOME DASHBOARD */
+        .banner {
+            background: linear-gradient(135deg, #3B82F6, #2563EB);
+            color: white;
+            padding: 20px;
+            border-radius: 15px;
+            margin-bottom: 25px;
+            box-shadow: 0 4px 10px rgba(37, 99, 235, 0.3);
+            position: relative;
+            overflow: hidden;
+        }
+        .banner h3 { margin: 0 0 5px; }
+        .banner button {
+            background: var(--accent);
+            border: none;
+            color: white;
+            padding: 8px 16px;
+            border-radius: 20px;
+            margin-top: 10px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        /* GRID MENU */
+        .grid-menu {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr; /* 3 Columns */
+            gap: 10px;
+        }
+        .card {
+            background: white;
+            padding: 15px 5px;
+            border-radius: 15px;
+            text-align: center;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+            cursor: pointer;
+            transition: transform 0.2s;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 90px;
+        }
+        .card:active { transform: scale(0.98); }
+        .card-icon {
+            font-size: 24px;
+            margin-bottom: 5px;
+            display: block;
+        }
+        .card b { font-size: 11px; }
+        
+        /* FORMS */
+        .form-group { margin-bottom: 15px; }
+        label { display: block; margin-bottom: 5px; font-weight: 600; font-size: 14px; }
+        input, select, textarea {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            box-sizing: border-box;
+        }
+        .btn-submit {
+            width: 100%;
+            background-color: var(--primary);
+            color: white;
+            border: none;
+            padding: 15px;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        /* --- FEATURE STYLES --- */
+        .quiz-question { background: white; padding: 15px; border-radius: 10px; margin-bottom: 15px; }
+        .quiz-option { 
+            display: block; 
+            padding: 10px; 
+            background: #f9f9f9; 
+            margin: 5px 0; 
+            border-radius: 5px; 
+            border: 1px solid #eee;
+            cursor: pointer;
+        }
+        .review-card {
+            background: white;
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 15px;
+            border-left: 4px solid var(--accent);
+            font-style: italic;
+        }
+        .syllabus-item {
+            background: white;
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 10px;
+            display: flex;
+            justify-content: space-between;
+        }
+        .fee-table, .time-table { width: 100%; border-collapse: collapse; background: white; border-radius: 10px; overflow: hidden; }
+        .fee-table th, .time-table th { background: var(--primary); color: white; padding: 10px; text-align: left; font-size: 14px; }
+        .fee-table td, .time-table td { padding: 10px; border-bottom: 1px solid #eee; font-size: 13px; }
+
+        /* Social Buttons */
+        .social-btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+            padding: 15px;
+            border-radius: 10px;
+            color: white;
+            font-weight: bold;
+            margin-bottom: 10px;
+            text-decoration: none;
+        }
+        .whatsapp { background-color: var(--whatsapp); }
+        .youtube { background-color: var(--youtube); }
+
+        /* BOTTOM NAVIGATION */
+        .bottom-nav {
+            position: fixed;
+            bottom: 0;
+            width: 100%;
+            background: white;
+            display: flex;
+            justify-content: space-around;
+            padding: 10px 0;
+            border-top: 1px solid #eee;
+            box-shadow: 0 -2px 10px rgba(0,0,0,0.05);
+            z-index: 1000;
+        }
+        .nav-item {
+            text-align: center;
+            font-size: 10px;
+            color: #888;
+            cursor: pointer;
+            flex: 1;
+        }
+        .nav-item.active { color: var(--primary); font-weight: bold; }
+        .nav-icon { font-size: 20px; display: block; margin-bottom: 2px; }
+
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>Focus Study Center</h1>
+        <p>Sarai, Vaishali | Dir: Nitin Kumar</p>
+    </header>
+
+    <div id="home" class="page active">
+        
+        <div class="news-ticker">
+            <div class="marquee-content">
+                📢 Scholarship Exam Date: Feb 15th | 📢 Admit Cards from Feb 10th | 📢 New Batch for Class 10th starts March 1st!
+            </div>
+        </div>
+
+        <div class="banner">
+            <h3>Scholarship Exam 2026</h3>
+            <p>Win 100% Scholarship! Exam on Feb 15th.</p>
+            <button onclick="nav('register')">Register Free</button>
+        </div>
+
+        <h3>All Features</h3>
+        <div class="grid-menu">
+            <div class="card" onclick="nav('register')">
+                <span class="card-icon">📝</span>
+                <b>Exam Form</b>
+            </div>
+            <div class="card" onclick="nav('timetable')">
+                <span class="card-icon">📅</span>
+                <b>Timetable</b>
+            </div>
+             <div class="card" onclick="nav('community')">
+                <span class="card-icon">👥</span>
+                <b>Join Group</b>
+            </div>
+
+            <div class="card" onclick="nav('videos')">
+                <span class="card-icon">▶️</span>
+                <b>Lectures</b>
+            </div>
+            <div class="card" onclick="nav('quiz')">
+                <span class="card-icon">🧠</span>
+                <b>Quiz</b>
+            </div>
+            <div class="card" onclick="nav('notes')">
+                <span class="card-icon">📚</span>
+                <b>PDF Notes</b>
+            </div>
+            
+            <div class="card" onclick="nav('results')">
+                <span class="card-icon">🏆</span>
+                <b>Results</b>
+            </div>
+            <div class="card" onclick="nav('syllabus')">
+                <span class="card-icon">📋</span>
+                <b>Syllabus</b>
+            </div>
+            <div class="card" onclick="nav('doubt')">
+                <span class="card-icon">💬</span>
+                <b>Ask Doubt</b>
+            </div>
+
+            <div class="card" onclick="nav('fees')">
+                <span class="card-icon">💰</span>
+                <b>Fees</b>
+            </div>
+            <div class="card" onclick="nav('faculty')">
+                <span class="card-icon">👨‍🏫</span>
+                <b>Faculty</b>
+            </div>
+            <div class="card" onclick="nav('gallery')">
+                <span class="card-icon">📸</span>
+                <b>Gallery</b>
+            </div>
+
+             <div class="card" onclick="nav('contact')">
+                <span class="card-icon">📍</span>
+                <b>Contact</b>
+            </div>
+            <div class="card" onclick="nav('testimonials')">
+                <span class="card-icon">⭐</span>
+                <b>Reviews</b>
+            </div>
+             <div class="card" onclick="nav('faq')">
+                <span class="card-icon">❓</span>
+                <b>FAQ</b>
+            </div>
+        </div>
+        
+        <br>
+        <p style="text-align:center; color:#aaa; font-size:12px;">App Designed by Nitin Kumar</p>
+    </div>
+
+    <div id="register" class="page">
+        <h2>Exam Registration</h2>
+        <p>Fill details for Scholarship Exam (Feb 15)</p>
+        <form onsubmit="submitForm(event)">
+            <div class="form-group">
+                <label>Student Name</label>
+                <input type="text" placeholder="Enter full name" required>
+            </div>
+            <div class="form-group">
+                <label>Father's Name</label>
+                <input type="text" placeholder="Father's name" required>
+            </div>
+            <div class="form-group">
+                <label>Phone Number</label>
+                <input type="tel" placeholder="10-digit mobile number" required>
+            </div>
+            <div class="form-group">
+                <label>Class</label>
+                <select>
+                    <option>8th</option>
+                    <option>9th</option>
+                    <option>10th</option>
+                    <option>12th</option>
+                </select>
+            </div>
+            <button type="submit" class="btn-submit">Submit Registration</button>
+        </form>
+    </div>
+
+    <div id="timetable" class="page">
+        <h2>Batch Schedule</h2>
+        <p>Daily Class Timings</p>
+        <table class="time-table">
+            <thead>
+                <tr>
+                    <th>Batch</th>
+                    <th>Time</th>
+                    <th>Days</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>Class 10th (M)</td>
+                    <td>06:00 AM</td>
+                    <td>Mon-Sat</td>
+                </tr>
+                <tr>
+                    <td>Class 12th (Phy)</td>
+                    <td>07:30 AM</td>
+                    <td>Mon-Sat</td>
+                </tr>
+                <tr>
+                    <td>Class 9th</td>
+                    <td>04:00 PM</td>
+                    <td>Mon-Fri</td>
+                </tr>
+                <tr>
+                    <td>JEE/NEET</td>
+                    <td>05:30 PM</td>
+                    <td>Mon-Sat</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <div id="community" class="page">
+        <h2>Join Our Community</h2>
+        <p>Get instant updates and free notes.</p>
+        
+        <div class="social-btn whatsapp" onclick="alert('Redirecting to WhatsApp Group...')">
+            <span style="font-size:20px; margin-right:10px;">📱</span> Join WhatsApp Group
+        </div>
+
+        <div class="social-btn youtube" onclick="alert('Redirecting to YouTube Channel...')">
+            <span style="font-size:20px; margin-right:10px;">▶️</span> Subscribe YouTube
+        </div>
+    </div>
+
+    <div id="doubt" class="page">
+        <h2>Ask a Doubt</h2>
+        <p>Stuck on a question? Ask us.</p>
+        <div class="form-group">
+            <label>Subject</label>
+            <select>
+                <option>Maths</option>
+                <option>Physics</option>
+                <option>Chemistry</option>
+            </select>
+        </div>
+        <div class="form-group">
+            <label>Type your question</label>
+            <textarea rows="5" placeholder="Write your doubt here..."></textarea>
+        </div>
+        <button class="btn-submit" onclick="alert('Doubt Sent! Teacher will reply soon.')">Send to Teacher</button>
+    </div>
+
+    <div id="quiz" class="page">
+        <h2>Daily Practice Quiz</h2>
+        <p>Topic: General Science</p>
+        
+        <div class="quiz-question">
+            <p><b>Q1. What is the chemical formula of Water?</b></p>
+            <label class="quiz-option"><input type="radio" name="q1"> H2O2</label>
+            <label class="quiz-option"><input type="radio" name="q1" onclick="alert('Correct! Well done.')"> H2O</label>
+            <label class="quiz-option"><input type="radio" name="q1"> CO2</label>
+        </div>
+        <div class="quiz-question">
+            <p><b>Q2. Which planet is known as the Red Planet?</b></p>
+            <label class="quiz-option"><input type="radio" name="q2"> Venus</label>
+            <label class="quiz-option"><input type="radio" name="q2" onclick="alert('Correct! Mars is red due to iron oxide.')"> Mars</label>
+            <label class="quiz-option"><input type="radio" name="q2"> Jupiter</label>
+        </div>
+        <button class="btn-submit" onclick="alert('Score: 2/2\nExcellent work!')">Submit Quiz</button>
+    </div>
+
+    <div id="syllabus" class="page">
+        <h2>Exam Syllabus</h2>
+        <p>Topics for Feb 15th Scholarship Test</p>
+        
+        <h4 style="color:var(--primary)">Class 10th</h4>
+        <div class="syllabus-item">
+            <span>Mathematics</span>
+            <b>Trigonometry, AP, Circles</b>
+        </div>
+        <div class="syllabus-item">
+            <span>Science</span>
+            <b>Light, Electricity, Acids</b>
+        </div>
+
+        <h4 style="color:var(--primary)">Class 12th</h4>
+        <div class="syllabus-item">
+            <span>Physics</span>
+            <b>Electrostatics, Optics</b>
+        </div>
+        <div class="syllabus-item">
+            <span>Maths</span>
+            <b>Integration, Calculus</b>
+        </div>
+    </div>
+
+    <div id="fees" class="page">
+        <h2>Fee Structure</h2>
+        <p>Affordable Quality Education</p>
+        <table class="fee-table">
+            <thead>
+                <tr>
+                    <th>Class</th>
+                    <th>Monthly</th>
+                    <th>Yearly</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>Class 9th</td>
+                    <td>₹500</td>
+                    <td>₹5500</td>
+                </tr>
+                <tr>
+                    <td>Class 10th</td>
+                    <td>₹600</td>
+                    <td>₹6500</td>
+                </tr>
+                <tr>
+                    <td>Class 11/12th</td>
+                    <td>₹800</td>
+                    <td>₹9000</td>
+                </tr>
+                <tr>
+                    <td>JEE / NEET</td>
+                    <td>₹1500</td>
+                    <td>₹16000</td>
+                </tr>
+            </tbody>
+        </table>
+        <br>
+        <p><small>* Scholarship winners get up to 100% off.</small></p>
+    </div>
+
+    <div id="testimonials" class="page">
+        <h2>Student Reviews</h2>
+        <div class="review-card">
+            "Focus Study Center changed my life. The teachers are very supportive."
+            <span class="review-author">- Rohan Singh, Class 10</span>
+        </div>
+        <div class="review-card">
+            "Best coaching in Sarai for Physics. I scored 95%."
+            <span class="review-author">- Anjali Kumari, Class 12</span>
+        </div>
+    </div>
+
+    <div id="faq" class="page">
+        <h2>Freq. Asked Questions</h2>
+        <div style="background:white; padding:15px; border-radius:10px; margin-bottom:10px;">
+            <b>Q: When is the Scholarship Exam?</b>
+            <p style="margin:5px 0 0; color:#555;">A: The exam is on February 15th, 2026.</p>
+        </div>
+        <div style="background:white; padding:15px; border-radius:10px; margin-bottom:10px;">
+            <b>Q: Is there a registration fee?</b>
+            <p style="margin:5px 0 0; color:#555;">A: No, registration is completely FREE.</p>
+        </div>
+    </div>
+
+    <div id="videos" class="page">
+        <h2>Video Lectures</h2>
+        <div style="background:white; padding:10px; border-radius:10px;">
+            <iframe width="100%" height="200" src="https://www.youtube.com/embed/placeholder" frameborder="0" allowfullscreen style="border-radius:10px;"></iframe>
+            <p><b>Introduction to Physics</b></p>
+        </div>
+        <p style="text-align:center; color:#666;">More videos coming soon!</p>
+    </div>
+
+    <div id="results" class="page">
+        <h2>Check Results</h2>
+        <div class="form-group">
+            <label>Enter Roll Number</label>
+            <input type="text" placeholder="e.g., FSC-2026-01">
+        </div>
+        <button class="btn-submit" onclick="alert('Result for this roll number is not published yet.')">Search</button>
+    </div>
+
+    <div id="notes" class="page">
+        <h2>Study Material</h2>
+        <div class="syllabus-item" style="border-left:5px solid #10B981;">
+            <div><b>Maths Formulas</b><br><small>2.5 MB</small></div>
+            <span onclick="alert('Downloading...')">⬇️</span>
+        </div>
+        <div class="syllabus-item" style="border-left:5px solid #10B981;">
+            <div><b>Science Notes</b><br><small>4.0 MB</small></div>
+            <span onclick="alert('Downloading...')">⬇️</span>
+        </div>
+    </div>
+
+    <div id="gallery" class="page">
+        <h2>Hall of Fame</h2>
+        <div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:5px;">
+            <div style="background:#ddd; aspect-ratio:1/1; border-radius:5px;"></div>
+            <div style="background:#ddd; aspect-ratio:1/1; border-radius:5px;"></div>
+            <div style="background:#ddd; aspect-ratio:1/1; border-radius:5px;"></div>
+            <div style="background:#ddd; aspect-ratio:1/1; border-radius:5px;"></div>
+            <div style="background:#ddd; aspect-ratio:1/1; border-radius:5px;"></div>
+            <div style="background:#ddd; aspect-ratio:1/1; border-radius:5px;"></div>
+        </div>
+    </div>
+
+    <div id="faculty" class="page">
+        <h2>Our Teachers</h2>
+        <div class="syllabus-item" style="align-items:center;">
+            <div style="width:50px; height:50px; background:#ddd; border-radius:50%; margin-right:15px; display:flex; align-items:center; justify-content:center;">👨‍🏫</div>
+            <div><b>Nitin Kumar</b><br><small>Director & Math Faculty</small></div>
+        </div>
+         <div class="syllabus-item" style="align-items:center;">
+            <div style="width:50px; height:50px; background:#ddd; border-radius:50%; margin-right:15px; display:flex; align-items:center; justify-content:center;">👨‍🔬</div>
+            <div><b>Science Sir</b><br><small>Physics Expert</small></div>
+        </div>
+    </div>
+
+    <div id="contact" class="page">
+        <h2>Contact Us</h2>
+        <div class="card" style="text-align:left; margin-bottom:20px;">
+            <p><b>📍 Address:</b><br>Focus Study Center, Sarai, Vaishali.</p>
+            <p><b>📞 Phone:</b><br>+91 99999 99999</p>
+        </div>
+        <div style="background:#ddd; height:200px; width:100%; border-radius:10px; display:flex; align-items:center; justify-content:center;">
+            Google Map Loading...
+        </div>
+    </div>
+
+    <div class="bottom-nav">
+        <div class="nav-item active" onclick="nav('home')">
+            <span class="nav-icon">🏠</span>Home
+        </div>
+        <div class="nav-item" onclick="nav('timetable')">
+            <span class="nav-icon">📅</span>Schedule
+        </div>
+        <div class="nav-item" onclick="nav('community')">
+            <span class="nav-icon">👥</span>Join
+        </div>
+        <div class="nav-item" onclick="nav('contact')">
+            <span class="nav-icon">📞</span>Help
+        </div>
+    </div>
+
+    <script>
+        function nav(pageId) {
+            document.querySelectorAll('.page').forEach(page => page.classList.remove('active'));
+            document.getElementById(pageId).classList.add('active');
+            window.scrollTo(0,0);
+        }
+
+        function submitForm(e) {
+            e.preventDefault(); 
+            alert("Registration Successful!\n\nTake a screenshot of this message.\nYour Roll Number will be sent via SMS before Feb 15th.");
+            nav('home');
+        }
+    </script>
+</body>
+</html>
